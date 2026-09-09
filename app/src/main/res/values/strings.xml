@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Mrmaz Screen Capture</string>
+    <string name="start_recording">بدء الالتقاط</string>
+    <string name="stop_recording">إيقاف وحفظ الفيديو</string>
+    <string name="ready">جاهز. اضغط لبدء الالتقاط.</string>
+    <string name="recording">جاري الالتقاط في الخلفية…</string>
+    <string name="countdown">يبدأ الالتقاط بعد %1$d</string>
+    <string name="overlay_required">اسمح للتطبيق بالظهور فوق التطبيقات حتى يعمل التعتيم.</string>
+    <string name="permission_cancelled">تم إلغاء إذن التقاط الشاشة.</string>
+    <string name="saved_video">تم حفظ الفيديو في مجلد Movies/Mrmaz.</string>
+    <string name="capture_channel">التقاط الشاشة</string>
+</resources>
