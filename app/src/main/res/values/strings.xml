@@ -8,6 +8,7 @@
     <string name="countdown">يبدأ الالتقاط بعد %1$d</string>
     <string name="overlay_required">اسمح للتطبيق بالظهور فوق التطبيقات حتى يعمل التعتيم.</string>
     <string name="permission_cancelled">تم إلغاء إذن التقاط الشاشة.</string>
+    <string name="saving_video">جاري إيقاف التسجيل وحفظ الفيديو…</string>
     <string name="saved_video">تم حفظ الفيديو في مجلد Movies/Mrmaz.</string>
     <string name="capture_channel">التقاط الشاشة</string>
 </resources>
