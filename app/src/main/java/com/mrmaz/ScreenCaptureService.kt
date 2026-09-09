@@ -131,14 +131,6 @@ class ScreenCaptureService : Service() {
                 prepare()
             }
 
-            reader = ImageReader.newInstance(
-                CAPTURE_WIDTH,
-                CAPTURE_HEIGHT,
-                PixelFormat.RGBA_8888,
-                2
-            )
-            reader?.setOnImageAvailableListener({ processFrame(it) }, handler)
-
             val density = resources.displayMetrics.densityDpi
             recordingDisplay = projection?.createVirtualDisplay(
                 "MrmazRecorder",
@@ -150,22 +142,46 @@ class ScreenCaptureService : Service() {
                 null,
                 handler
             )
-            analysisDisplay = projection?.createVirtualDisplay(
-                "MrmazAnalysis",
-                CAPTURE_WIDTH,
-                CAPTURE_HEIGHT,
-                density,
-                DisplayManager.VIRTUAL_DISPLAY_FLAG_AUTO_MIRROR,
-                reader!!.surface,
-                null,
-                handler
-            )
             recorder?.start()
+
+            // Android 14+ allows only one virtual display per projection session.
+            // Analysis is optional: never let its failure break the recording.
+            try {
+                reader = ImageReader.newInstance(
+                    CAPTURE_WIDTH,
+                    CAPTURE_HEIGHT,
+                    PixelFormat.RGBA_8888,
+                    2
+                )
+                reader?.setOnImageAvailableListener({ processFrame(it) }, handler)
+                analysisDisplay = projection?.createVirtualDisplay(
+                    "MrmazAnalysis",
+                    CAPTURE_WIDTH,
+                    CAPTURE_HEIGHT,
+                    density,
+                    DisplayManager.VIRTUAL_DISPLAY_FLAG_AUTO_MIRROR,
+                    reader!!.surface,
+                    null,
+                    handler
+                )
+            } catch (_: Throwable) {
+                analysisDisplay = null
+                try { reader?.close() } catch (_: Exception) { }
+                reader = null
+            }
+
             installOverlay()
-        } catch (_: Exception) {
+        } catch (error: Throwable) {
+            saveError(error.javaClass.simpleName + ": " + (error.message ?: ""))
             stopCapture()
         }
     }
+
+    private fun saveError(message: String) {
+        getSharedPreferences("mrmaz", Context.MODE_PRIVATE)
+            .edit().putString("last_error", message).apply()
+    }
+
 
     private fun processFrame(source: ImageReader) {
         val now = SystemClock.elapsedRealtime()
