@@ -21,6 +21,7 @@ class MainActivity : Activity() {
     private val preferences by lazy { getSharedPreferences("mrmaz", Context.MODE_PRIVATE) }
     private val projectionRequestCode = 710
     private val overlayRequestCode = 711
+    private var stopRequested = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -89,6 +90,7 @@ class MainActivity : Activity() {
                     } else {
                         startService(serviceIntent)
                     }
+                    stopRequested = false
                     preferences.edit().putBoolean(ScreenCaptureService.PREF_RECORDING, true).apply()
                     statusText.setText(R.string.recording)
                     moveTaskToBack(true)
@@ -103,10 +105,28 @@ class MainActivity : Activity() {
     }
 
     private fun stopRecording() {
+        if (!isRecording() || stopRequested) return
+
+        stopRequested = true
+        recordButton.isEnabled = false
+        statusText.setText(R.string.saving_video)
         startService(Intent(this, ScreenCaptureService::class.java).setAction(ScreenCaptureService.ACTION_STOP))
-        preferences.edit().putBoolean(ScreenCaptureService.PREF_RECORDING, false).apply()
-        statusText.setText(R.string.saved_video)
-        updateUi()
+        waitForServiceToFinish()
+    }
+
+    private fun waitForServiceToFinish() {
+        handler.post(object : Runnable {
+            override fun run() {
+                if (isRecording()) {
+                    handler.postDelayed(this, 100L)
+                    return
+                }
+
+                stopRequested = false
+                statusText.setText(R.string.saved_video)
+                updateUi()
+            }
+        })
     }
 
     private fun isRecording(): Boolean =
@@ -116,8 +136,11 @@ class MainActivity : Activity() {
         if (!::recordButton.isInitialized) return
         if (isRecording()) {
             recordButton.setText(R.string.stop_recording)
-            statusText.setText(R.string.recording)
+            recordButton.isEnabled = !stopRequested
+            if (!stopRequested) statusText.setText(R.string.recording)
         } else {
+            stopRequested = false
+            recordButton.isEnabled = true
             recordButton.setText(R.string.start_recording)
             if (statusText.text.isNullOrBlank()) statusText.setText(R.string.ready)
         }
