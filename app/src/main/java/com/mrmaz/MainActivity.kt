@@ -42,6 +42,13 @@ class MainActivity : Activity() {
     }
 
     private fun requestCapture() {
+        preferences.edit().remove("last_error").apply()
+        if (Build.VERSION.SDK_INT >= 33 &&
+            checkSelfPermission(android.Manifest.permission.POST_NOTIFICATIONS) !=
+            android.content.pm.PackageManager.PERMISSION_GRANTED
+        ) {
+            requestPermissions(arrayOf(android.Manifest.permission.POST_NOTIFICATIONS), 712)
+        }
         if (!Settings.canDrawOverlays(this)) {
             statusText.setText(R.string.overlay_required)
             val intent = Intent(
@@ -134,6 +141,7 @@ class MainActivity : Activity() {
 
     private fun updateUi() {
         if (!::recordButton.isInitialized) return
+        val lastError = preferences.getString("last_error", null)
         if (isRecording()) {
             recordButton.setText(R.string.stop_recording)
             recordButton.isEnabled = !stopRequested
@@ -142,9 +150,15 @@ class MainActivity : Activity() {
             stopRequested = false
             recordButton.isEnabled = true
             recordButton.setText(R.string.start_recording)
-            if (statusText.text.isNullOrBlank()) statusText.setText(R.string.ready)
+            if (!lastError.isNullOrBlank()) {
+                statusText.text = "خطأ: $lastError"
+                preferences.edit().remove("last_error").apply()
+            } else if (statusText.text.isNullOrBlank()) {
+                statusText.setText(R.string.ready)
+            }
         }
     }
+
 
     override fun onDestroy() {
         handler.removeCallbacksAndMessages(null)
