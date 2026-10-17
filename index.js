@@ -48,6 +48,7 @@ footer{text-align:center;padding:26px 20px;color:var(--text-d);font-size:.7rem;l
 @media(max-width:760px){.stats-grid{grid-template-columns:repeat(2,1fr)}.skills-grid{grid-template-columns:1fr;gap:20px}.svc-grid{grid-template-columns:1fr 1fr}.nav-links{display:none}#about{padding-top:100px}.hero-desc{max-width:570px}.proj-card{padding:25px 22px}}
 @media(max-width:500px){.stats-grid{gap:8px}.stat-card{padding:23px 10px}.svc-grid{grid-template-columns:1fr}.svc-card,.svc-card:nth-child(n){padding:23px 21px}.nav{padding-inline:5%}.section-title{font-size:1.9rem}.proj-body{gap:8px}.proj-name{font-size:1.28rem}.soc-grid{grid-template-columns:1fr 1fr}.soc-btn{padding:14px 12px;gap:9px}.soc-handle{font-size:.68rem}.ticker-fade{width:55px}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}.reveal{opacity:1;transform:none}}
+.code-loader{position:absolute;left:50%;bottom:16px;z-index:2;display:flex;align-items:center;gap:3px;transform:translateX(-50%)}.code-loader span{display:block;width:7px;height:2px;background:var(--accent);opacity:.25;transform:scaleX(.45);transform-origin:left center;animation:code-progress 1.4s ease-in-out infinite}.code-loader span:nth-child(2){animation-delay:.16s;background:var(--accent-bright)}.code-loader span:nth-child(3){animation-delay:.32s;background:var(--accent-hot)}.code-loader b{display:block;width:2px;height:8px;margin-left:2px;background:var(--accent-hot);animation:blink 1.1s step-end infinite}@keyframes code-progress{0%,100%{opacity:.24;transform:scaleX(.45)}50%{opacity:.95;transform:scaleX(1)}}
 </style>
 </head>
 <body>
@@ -68,14 +69,12 @@ footer{text-align:center;padding:26px 20px;color:var(--text-d);font-size:.7rem;l
 
 <section id="about">
   <div class="avatar-wrap">
-    <div class="pulse-r"></div>
-    <div class="pulse-r"></div>
-    <div class="orbit-wrap"><div class="orbit-dot"></div></div>
     <div class="avatar-core">
       <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
-        <rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/>
+        <polyline points="8 6 2 12 8 18"/><polyline points="16 18 22 12 16 6"/><line x1="15" y1="4" x2="9" y2="20"/>
       </svg>
     </div>
+    <div class="code-loader" aria-hidden="true"><span></span><span></span><span></span><b></b></div>
   </div>
   <p class="hero-tag">Web Developer · Iraq</p>
   <h1 class="hero-name">Laith Al-Dahash</h1>
