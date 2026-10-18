@@ -49,6 +49,7 @@ footer{text-align:center;padding:26px 20px;color:var(--text-d);font-size:.7rem;l
 @media(max-width:500px){.stats-grid{gap:8px}.stat-card{padding:23px 10px}.svc-grid{grid-template-columns:1fr}.svc-card,.svc-card:nth-child(n){padding:23px 21px}.nav{padding-inline:5%}.section-title{font-size:1.9rem}.proj-body{gap:8px}.proj-name{font-size:1.28rem}.soc-grid{grid-template-columns:1fr 1fr}.soc-btn{padding:14px 12px;gap:9px}.soc-handle{font-size:.68rem}.ticker-fade{width:55px}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}.reveal{opacity:1;transform:none}}
 .code-loader{position:absolute;left:50%;bottom:16px;z-index:2;display:flex;align-items:center;gap:3px;transform:translateX(-50%)}.code-loader span{display:block;width:7px;height:2px;background:var(--accent);opacity:.25;transform:scaleX(.45);transform-origin:left center;animation:code-progress 1.4s ease-in-out infinite}.code-loader span:nth-child(2){animation-delay:.16s;background:var(--accent-bright)}.code-loader span:nth-child(3){animation-delay:.32s;background:var(--accent-hot)}.code-loader b{display:block;width:2px;height:8px;margin-left:2px;background:var(--accent-hot);animation:blink 1.1s step-end infinite}@keyframes code-progress{0%,100%{opacity:.24;transform:scaleX(.45)}50%{opacity:.95;transform:scaleX(1)}}
+.ticker-wrap{perspective:700px}.ticker-wrap:hover .ticker-track,.ticker-wrap:focus-within .ticker-track{animation-play-state:paused}.ticker-track{transform-style:preserve-3d}.logo-cell{position:relative;cursor:pointer;transform-style:preserve-3d}.logo-cell img{width:30px;height:30px;object-fit:contain;filter:grayscale(1) brightness(0) invert(1);opacity:.72;background:none;padding:0;border-radius:0;transition:filter .3s,opacity .3s,transform .3s;display:block}.logo-cell img:hover{filter:grayscale(1) brightness(0) invert(1);opacity:.72;transform:none}.logo-cell.is-active{z-index:4}.logo-cell.is-active img,.logo-cell.is-active img:hover{filter:none;opacity:1;transform:translateZ(24px) scale(1.16)}.logo-cell:focus-visible{outline:1px solid var(--accent);outline-offset:-4px;border-radius:6px}
 </style>
 </head>
 <body>
@@ -266,13 +267,36 @@ const logos = [
   'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/git/git-original.svg',
   'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/linux/linux-original.svg',
 ];
+const logoNames = ['HTML5', 'CSS3', 'JavaScript', 'TypeScript', 'Python', 'React', 'Node.js', 'PHP', 'C++', 'Java', 'Go', 'Rust', 'Vue', 'Docker', 'Git', 'Linux'];
 const ticker = document.getElementById('ticker');
-[...logos,...logos].forEach(src => {
+[...logos,...logos].forEach((src, index) => {
   const cell = document.createElement('div');
   cell.className = 'logo-cell';
+  cell.setAttribute('role', 'button');
+  cell.setAttribute('tabindex', '0');
+  cell.setAttribute('aria-label', logoNames[index % logos.length]);
+  cell.setAttribute('aria-pressed', 'false');
   const img = document.createElement('img');
   img.src = src; img.alt = '';
   cell.appendChild(img);
+  const toggleLogo = () => {
+    const wasActive = cell.classList.contains('is-active');
+    ticker.querySelectorAll('.logo-cell.is-active').forEach(activeCell => {
+      activeCell.classList.remove('is-active');
+      activeCell.setAttribute('aria-pressed', 'false');
+    });
+    if (!wasActive) {
+      cell.classList.add('is-active');
+      cell.setAttribute('aria-pressed', 'true');
+    }
+  };
+  cell.addEventListener('click', toggleLogo);
+  cell.addEventListener('keydown', event => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      toggleLogo();
+    }
+  });
   ticker.appendChild(cell);
 });
 
